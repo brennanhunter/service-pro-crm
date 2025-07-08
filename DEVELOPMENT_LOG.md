@@ -64,7 +64,7 @@ ServiceTracker Pro is a white-label SaaS platform for local service businesses (
 
 ---
 
-## ✅ CURRENT WORKING STATE (As of Development Session)
+## ✅ CURRENT WORKING STATE (As of Latest Development Session)
 
 ### Authentication System ✅
 - **Supabase Auth** integrated and working
@@ -85,13 +85,29 @@ ServiceTracker Pro is a white-label SaaS platform for local service businesses (
 - Displays real service tickets from test data
 - Service counts and statistics working
 - **Service creation fully functional** ✅
+- **Navigation to customer management** ✅
 
 ### Service Management ✅
 - **"New Service" button creates real tickets**
 - Form validation and error handling
 - Customer creation (new) or lookup (existing)
 - Auto-refresh dashboard after creation
+- **Clickable service cards with details modal** ✅
+- **Service status updates working** ✅
+  - PENDING → IN_PROGRESS → COMPLETED
+  - Real-time status changes with API calls
+  - Service update history tracking
 - Proper multi-tenant isolation maintained
+
+### Customer Management ✅
+- **Dedicated customers page** at `/customers` ✅
+- **Navigation between Services and Customers** ✅
+- **Customer list with stats** (total customers, etc.) ✅
+- **Clickable customer rows** ✅
+- **Customer service history modal** ✅
+  - Shows all services for selected customer
+  - Displays service status and dates
+  - Professional modal design
 
 ### Deployment ✅
 - **Successfully deployed to Vercel**
@@ -130,10 +146,12 @@ ServiceTracker Pro is a white-label SaaS platform for local service businesses (
 - **`app/api/dashboard/route.ts`** - Returns business data for authenticated users
 - **`app/api/user/business/route.ts`** - Gets current user's business info
 - **`app/api/services/create/route.ts`** - Creates new service tickets ✅
+- **`app/api/services/[id]/route.ts`** - Updates service status and creates update records ✅
 
 ### Frontend Pages
 - **`app/login/page.tsx`** - Login/signup form with toggle
-- **`app/dashboard/page.tsx`** - Main business dashboard with working service creation
+- **`app/dashboard/page.tsx`** - Main business dashboard with working service creation, navigation, and service status management
+- **`app/customers/page.tsx`** - Customer management with service history ✅
 - **`app/auth-test/page.tsx`** - Authentication status checker
 - **`app/test-business/page.tsx`** - Business info display (debug)
 - **`app/test-services/page.tsx`** - Service list display (debug)
@@ -195,7 +213,7 @@ Business (Multi-tenant root)
 ├── Users (Business employees/admins) - Primary key: user.id (Supabase auth ID)
 ├── Customers (Business clients)
 ├── Services (Service tickets)
-│   ├── ServiceUpdates (Uses userId field, not createdBy)
+│   ├── ServiceUpdates (Uses userId field, tracks status changes and notes)
 │   └── Invoices (Billing)
 ```
 
@@ -204,13 +222,14 @@ Business (Multi-tenant root)
 - Users linked to Supabase auth via `user.id` primary key
 - Customers belong to one business  
 - Services belong to customer + business
+- ServiceUpdates track all changes to services
 - Perfect tenant isolation maintained
 
 ### Sample Data Created
 **Xtremery Computer Repair:**
 - Admin: Brennan Hunter (brennan@xtremery-repair.com)
-- Customer: John Smith
-- Service: "Laptop won't boot" (PENDING status)
+- Customer: John Smith, Hunter
+- Services: "Laptop won't boot", "Test" (various statuses)
 
 **Central Florida HVAC:**
 - Admin: HVAC Owner
@@ -222,23 +241,35 @@ Business (Multi-tenant root)
 ## 🎨 CURRENT UI/UX STATE
 
 ### Dashboard Features Working ✅
-- **Header:** Business name display + "New Service" button (functional)
+- **Header:** Business name display + navigation + "New Service" button
+- **Navigation:** Clean links between Services and Customers pages
 - **Stats Cards:** Total/Active/Completed service counts
 - **Service List:** Real service tickets with status badges
+- **Clickable Services:** Modal with service details and status updates
+- **Status Management:** Dropdown to change PENDING → IN_PROGRESS → COMPLETED
 - **Status Colors:** Yellow (pending), Blue (in progress), Green (completed)
 - **Responsive Design:** Mobile-friendly layout
-- **Service Creation:** Full form → API → database → refresh cycle working
+
+### Customer Management Features Working ✅
+- **Customer List:** Table with name, email, phone, date added
+- **Customer Stats:** Total customers with placeholders for more metrics
+- **Clickable Customers:** Modal showing customer details and service history
+- **Service History:** Shows all services for selected customer with status
+- **Navigation:** Smooth flow between customers and services pages
+- **Empty States:** Helpful messages when no customers exist
 
 ### Forms Working ✅
 - **Login Form:** Email + password with proper validation
 - **Signup Form:** Email + password + full name
 - **New Service Form:** All fields functional, creates real tickets
+- **Status Updates:** Dropdown with immediate feedback and persistence
 
-### Navigation Flow
+### Navigation Flow ✅
 - `/` → redirects to dashboard if logged in
 - `/login` → authentication page with signup toggle
 - `/dashboard` → main business interface (auth required)
-- Various test pages for debugging
+- `/customers` → customer management page (auth required)
+- Smooth navigation between pages with consistent header
 
 ---
 
@@ -290,6 +321,7 @@ SENDGRID_API_KEY="SG..."
 1. **Prisma Generation:** Added to build script
 2. **Environment Variables:** Separated client/server vars
 3. **Database Connection:** Using pooled connection URLs
+4. **Next.js 15 Compatibility:** Updated API route patterns for async params
 
 ---
 
@@ -299,86 +331,91 @@ SENDGRID_API_KEY="SG..."
 - User registration and login
 - Multi-tenant data isolation
 - Business dashboard display
-- Service ticket viewing
-- **Service ticket creation** ✅
+- **Service ticket creation and management** ✅
+- **Service status updates (PENDING → IN_PROGRESS → COMPLETED)** ✅
+- **Customer management with service history** ✅
+- **Navigation between Services and Customers pages** ✅
+- **Clickable interfaces for both services and customers** ✅
 - Authentication protection
 - Production deployment
 - Database queries and relationships
 
-### 🔄 Next Priority: Service Status Updates
-- Service cards are not clickable yet
-- Need service details modal
-- Status update functionality (PENDING → IN_PROGRESS → COMPLETED)
-- Add notes/updates to services
-- View update history
+### 🔄 Next Priority: Business Features
+- **Add Customer functionality** - create customers independently of services
+- **Customer editing** - update customer info, phone numbers, addresses
+- **Service notes/updates** - add notes when changing status
+- **Enhanced service details** - show costs, priorities, assignments
 
 ### ❌ Not Started Yet
 - Customer portal (separate login for customers)
-- Invoice generation
+- Invoice generation and management
 - File uploads for service requests
-- SMS notifications
-- Advanced reporting
+- SMS notifications for customers
+- Advanced reporting and analytics
 - Subscription billing integration
 - Business onboarding flow
+- Team member management
 
 ---
 
 ## 🎯 IMMEDIATE NEXT STEPS
 
-### Priority 1: Service Status Management
-1. **Make service cards clickable** 
-   - Add onClick handlers to service items
-   - Add hover states and cursor styling
+### Priority 1: Complete Customer Management
+1. **"Add Customer" functionality** 
+   - Create customers without having to create a service first
+   - Customer form with name, email, phone, address, notes
 
-2. **Create service details modal**
-   - Show full service information
-   - Status update dropdown
-   - Add notes functionality
-   - Update history display
+2. **Customer editing capabilities**
+   - Edit existing customer information
+   - Update contact details and notes
 
-3. **Build API endpoint for service updates**
-   - `/api/services/[id]/update` route
-   - Handle status changes and note additions
-   - Create ServiceUpdate records
+3. **Enhanced customer insights**
+   - Show customer value (total services, revenue)
+   - Display last service date and status
 
-### Priority 2: Polish Core Features  
-1. **Add Xtremery Branding**
+### Priority 2: Enhanced Service Management  
+1. **Service notes and updates**
+   - Add notes when changing status
+   - Show update history with timestamps
+   - Technician comments and internal notes
+
+2. **Better service details**
+   - Show service priority, costs, dates
+   - Assign technicians to services
+   - Upload photos and documents
+
+### Priority 3: Business Polish
+1. **Xtremery Branding**
    - Purple color scheme (#7C3AED, #1D4ED8, #00FFD1)
    - Custom logo integration
-   - Professional styling
+   - Professional styling throughout
 
-2. **Improve Service Display**
-   - Better status badges
-   - Date formatting
-   - Priority indicators
-
-### Priority 3: Customer Portal
-1. **Customer Authentication**
-   - Separate login flow for customers
-   - Email-based customer accounts
-   - Customer-specific service view
+2. **User Experience Improvements**
+   - Better loading states and transitions
+   - Toast notifications for successful actions
+   - Keyboard shortcuts and accessibility
 
 ---
 
 ## 🐛 KNOWN ISSUES & SOLUTIONS
 
-### Issue: Services showing as undefined in console
-**Current Status:** Investigating data structure mismatch between API and frontend
-**API Returns:** `{business: {...}, services: Array(2), debug: {...}}`
-**Frontend Expects:** `data?.services` but getting undefined
-**Next Step:** Check how data is being set in component state
+### Issue: Next.js 15 API Route Compatibility
+**Solution:** Use async params pattern: `context: { params: Promise<{ id: string }> }` and `await context.params`
 
-### Issue: CORS Errors in Development
-**Solution:** Using server-side API routes instead of direct client calls
+### Issue: TypeScript Strict Mode Errors
+**Solution:** Define proper types instead of using `any`, remove unused variables
 
-### Issue: TypeScript Errors with Unknown Types
-**Solution:** Added proper type guards and error handling
+### Issue: Brief UI hang during status updates
+**Status:** Acceptable for MVP - prevents race conditions and provides user feedback
+**Future:** Could add optimistic updates or loading spinners
 
-### Issue: Environment Variables Not Loading
-**Solution:** Use NEXT_PUBLIC_ prefix for client-side variables
+### Issue: Customer data extracted from services
+**Status:** Working but not ideal - customers only exist through services
+**Next:** Create dedicated customers API endpoint
 
-### Issue: Prisma Client Not Generated on Vercel
-**Solution:** Added `prisma generate &&` to build script in package.json
+### Issue: No real-time updates between pages
+**Status:** Manual refresh required when data changes
+**Future:** Consider WebSocket updates or polling
 
 ---
 
@@ -390,24 +427,33 @@ SENDGRID_API_KEY="SG..."
 // 2. Validate with Supabase using service role key
 // 3. Get user from database using user.id (Supabase auth ID)
 // 4. Execute business-scoped query using user's businessId
-// 5. Return filtered results
+// 5. Return filtered results with proper error handling
 ```
 
-### Component Pattern
+### Component Pattern ✅
 ```typescript
 // 1. Client component with 'use client'
-// 2. State management with useState
-// 3. Auth check with useEffect
+// 2. State management with useState for UI and data
+// 3. Auth check with useEffect and session validation
 // 4. API calls with fetch + auth headers
 // 5. Error handling and loading states
+// 6. Modal patterns for detailed views
 ```
 
-### Database Query Pattern
+### Database Query Pattern ✅
 ```typescript
 // 1. Use user.id to find user record (NOT compound key)
 // 2. Always include businessId in where clauses for tenant isolation
-// 3. Include necessary relations
-// 4. Handle errors gracefully
+// 3. Include necessary relations for full data
+// 4. Handle errors gracefully with meaningful messages
+```
+
+### Navigation Pattern ✅
+```typescript
+// 1. Consistent header with business name and navigation
+// 2. Simple anchor links for page navigation
+// 3. Active state indicators for current page
+// 4. Consistent button styling and placement
 ```
 
 ---
@@ -415,69 +461,90 @@ SENDGRID_API_KEY="SG..."
 ## 📚 KEY LEARNINGS & DECISIONS
 
 ### Why This Tech Stack
-- **Next.js 15:** Latest features, great developer experience
-- **Supabase:** Managed PostgreSQL + built-in auth
-- **Prisma:** Type-safe database queries
+- **Next.js 15:** Latest features, great developer experience, excellent API routes
+- **Supabase:** Managed PostgreSQL + built-in auth, perfect for multi-tenant
+- **Prisma:** Type-safe database queries, excellent developer experience
 - **Vercel:** Easy deployment, great Next.js integration
 
 ### Architecture Decisions
-- **Multi-tenancy:** Business-scoped data isolation
+- **Multi-tenancy:** Business-scoped data isolation at database level
 - **Authentication:** Supabase Auth + custom user records linked by user.id
-- **API Design:** RESTful routes with proper error handling
-- **Frontend:** React components with TypeScript
+- **API Design:** RESTful routes with proper error handling and validation
+- **Frontend:** React components with TypeScript, modal-based detail views
+- **Navigation:** Simple page-based routing, not complex SPA state management
+
+### UI/UX Decisions
+- **Modal-based details:** Quick access without losing context
+- **Consistent patterns:** Same header, navigation, and styling across pages
+- **Progressive disclosure:** Show overview first, details on demand
+- **Status-driven design:** Visual indicators for service and customer states
 
 ### Security Considerations
-- All API routes validate authentication
-- Database queries always filtered by business
-- Environment variables properly separated
-- No sensitive data in client code
+- All API routes validate authentication with Supabase
+- Database queries always filtered by business for tenant isolation
+- Environment variables properly separated between client and server
+- No sensitive data exposed in client code
+- Proper error handling without information leakage
 
 ---
 
 ## 🎪 DEMO SCRIPT
 
 ### For Showing the Working App
-1. **Go to login page:** Show signup/login toggle
-2. **Create account or login:** Use test credentials
-3. **Show dashboard:** Point out business name, service counts
-4. **Create new service:** Fill out form, submit, watch it appear
-5. **Show service list:** Real data with customer info
-6. **Show auth protection:** Logout and try to access dashboard
+1. **Login:** Show authentication with test credentials
+2. **Dashboard Overview:** Point out business name, service counts, navigation
+3. **Service Management:** 
+   - Create new service (show form, customer creation)
+   - Click existing service to show details modal
+   - Update service status (PENDING → IN_PROGRESS → COMPLETED)
+4. **Customer Management:**
+   - Navigate to customers page
+   - Click customer to show service history
+   - Demonstrate navigation between pages
+5. **Data Persistence:** Show that changes are saved and persist across page refreshes
 
 ### Key Points to Highlight
-- "This is a real SaaS application with working service creation"
-- "Multi-tenant - each business only sees their data"
-- "Deployed and working in production"
-- "Secure authentication and data isolation"
-- "Ready for real customers to use basic service management"
+- "This is a complete service management system working in production"
+- "Multi-tenant - each business only sees their data with perfect isolation"
+- "Real business workflow: create services, update status, manage customers"
+- "Professional UI with consistent navigation and modal interactions"
+- "Built with modern tech stack, fully deployed and scalable"
 
 ---
 
 ## 🔮 FUTURE ROADMAP
 
-### Phase 1: Complete MVP Service Management
-- Service status updates (PENDING → IN_PROGRESS → COMPLETED)
-- Add notes to services
-- Service update history
-- Basic customer portal
+### Phase 1: Complete MVP Service Management (Next 2-4 weeks)
+- Add Customer functionality (independent customer creation)
+- Enhanced service details and notes
+- Customer editing capabilities
+- Basic Xtremery branding
 
-### Phase 2: Business Features
-- Invoice generation
-- File uploads
+### Phase 2: Business Features (1-2 months)
+- Invoice generation and management
+- File uploads for service requests
 - Team member management
-- Basic reporting
+- Basic reporting and analytics
 
-### Phase 3: Scale Features
+### Phase 3: Customer Portal (2-3 months)
+- Separate customer login system
+- Customer-facing service tracking
+- Email notifications for status updates
+- Customer feedback and ratings
+
+### Phase 4: Scale Features (3-6 months)
 - Business onboarding flow
-- Subscription billing
-- Advanced analytics
+- Subscription billing with Stripe
+- Advanced analytics and reporting
 - Mobile app (React Native)
+- SMS notification system
 
-### Phase 4: Growth Features
+### Phase 5: Growth Features (6+ months)
 - API for integrations
 - White-label mobile apps
 - Franchise/multi-location support
 - Advanced workflow automation
+- Third-party service integrations
 
 ---
 
@@ -488,47 +555,63 @@ SENDGRID_API_KEY="SG..."
 2. **Use the test data** to verify functionality
 3. **Check authentication** on every new page/feature
 4. **Maintain tenant isolation** in all database queries
-5. **Use TypeScript properly** with error handling
+5. **Follow established patterns** for consistency
+6. **Use TypeScript properly** with defined types, avoid `any`
 
 ### When Talking to New AI Assistants
 1. **Share this document first** for full context
 2. **Ask them to see specific files** before they code
-3. **Include error messages verbatim**
+3. **Include error messages verbatim** with full stack traces
 4. **Specify whether you want to test locally or deploy**
-5. **Ask for small, incremental changes**
+5. **Ask for small, incremental changes** that build on existing patterns
 6. **Use the established patterns** shown in this document
 
 ### Development Best Practices
 - Commit frequently with descriptive messages
-- Test authentication edge cases
-- Always verify multi-tenant isolation
-- Keep components small and focused
-- Document complex business logic
-- Follow the AI collaboration patterns above
+- Test authentication edge cases and tenant isolation
+- Keep components small and focused on single responsibilities
+- Document complex business logic in comments
+- Follow the AI collaboration patterns for efficient development
+- Always verify multi-tenant isolation in new features
+
+### Code Organization Principles
+- Keep API routes simple and focused on single operations
+- Use consistent naming conventions across files
+- Separate concerns: UI components, business logic, data access
+- Maintain clear separation between client and server code
+- Use TypeScript interfaces for consistent data structures
 
 ---
 
 ## 📞 EMERGENCY CONTACT INFO
 
 ### If Everything Breaks
-1. **Database Issues:** Check Supabase dashboard
-2. **Auth Issues:** Verify environment variables
-3. **Build Issues:** Check Vercel deployment logs
-4. **Local Issues:** Delete .next folder and restart
+1. **Database Issues:** Check Supabase dashboard for connection problems
+2. **Auth Issues:** Verify environment variables in Vercel dashboard
+3. **Build Issues:** Check Vercel deployment logs for errors
+4. **Local Issues:** Delete .next folder and restart dev server
+5. **API Issues:** Check browser network tab for failed requests
 
 ### Key URLs
 - **Local Dashboard:** http://localhost:3000/dashboard
+- **Local Customers:** http://localhost:3000/customers
 - **Login Page:** http://localhost:3000/login
 - **Supabase Dashboard:** https://supabase.com/dashboard
 - **Vercel Dashboard:** https://vercel.com/dashboard
 
 ### Test Data Access
 - Run `npx ts-node test.ts` to recreate test data
-- Check `app/check-users/page.tsx` to verify database state
-- Use Prisma Studio for database inspection
+- Use Prisma Studio (`npx prisma studio`) for database inspection
+- Check browser console for API call debugging
+
+### Common Troubleshooting
+- **"No services yet":** Check if user is associated with correct business
+- **Authentication redirects:** Verify session token and user.id lookup
+- **Modal not opening:** Check console for JavaScript errors
+- **Status not updating:** Verify API route is receiving correct service ID
 
 ---
 
-**Last Updated:** After successful service creation implementation and AI collaboration pattern documentation
-**Next Session Goal:** Implement service status updates with clickable service cards and details modal
-**Status:** Ready for continued development - service creation working, patterns established
+**Last Updated:** After implementing customer management system and service status updates
+**Next Session Goal:** Add independent customer creation functionality and enhanced service details
+**Status:** Ready for continued development - core service and customer management operational, navigation working, all features tested and deployed
