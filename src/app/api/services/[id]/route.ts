@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export default async function handler(
+export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
