@@ -20,10 +20,19 @@ type Business = {
   subdomain: string
 }
 
+type Service = {
+  id: string
+  title: string
+  description: string
+  status: string
+  createdAt: string
+  customer: Customer
+}
+
 type CustomersData = {
   business: Business
   customers: Customer[]
-  services: any[]
+  services: Service[]
 }
 
 export default function Customers() {
@@ -85,6 +94,7 @@ export default function Customers() {
   }
 
   if (loading) return <div className="p-8">Loading customers...</div>
+  if (error) return <div className="p-8 text-red-600">Error: {error}</div>
 
   return (
     <div className="min-h-screen bg-gray-50">
