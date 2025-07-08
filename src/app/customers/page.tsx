@@ -65,7 +65,7 @@ export default function Customers() {
       
       if (response.ok) {
         // Extract unique customers from services
-        const uniqueCustomers = dashboardData.services.reduce((acc: Customer[], service: any) => {
+        const uniqueCustomers = dashboardData.services.reduce((acc: Customer[], service: Service) => {
           const existingCustomer = acc.find(c => c.email === service.customer.email)
           if (!existingCustomer) {
             acc.push({
