@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { prisma, TenantContext } from '@/lib/database';
+import { prisma } from '@/lib/database';
 
 // Initialize Supabase client for server-side operations
 const supabase = createClient(

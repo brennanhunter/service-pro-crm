@@ -140,7 +140,7 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-gray-900">
                 {data?.business.name} Dashboard
               </h1>
-              <p className="text-gray-600">Welcome back! Here's what's happening.</p>
+              <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening.</p>
             </div>
             <button 
               onClick={() => setShowNewServiceForm(true)}
