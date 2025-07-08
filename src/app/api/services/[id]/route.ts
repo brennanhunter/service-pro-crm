@@ -10,9 +10,11 @@ const supabase = createClient(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
+    
     // Get the authorization token from headers
     const authHeader = request.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
