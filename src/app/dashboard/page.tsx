@@ -30,6 +30,8 @@ type DashboardData = {
 }
 
 export default function Dashboard() {
+  const [currentStatus, setCurrentStatus] = useState<string>('')
+  const [updatingStatus, setUpdatingStatus] = useState(false)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -76,11 +78,49 @@ export default function Dashboard() {
     }
   }
 
-  const handleCreateService = async () => {
-    if (!newService.title || !newService.description || !newService.customerName || !newService.customerEmail) {
-      setError('Please fill in all required fields')
+const handleStatusUpdate = async (serviceId: string, newStatus: string) => {
+  setUpdatingStatus(true)
+  
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      window.location.href = '/login'
       return
     }
+
+    const response = await fetch(`/api/services/${serviceId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({
+        status: newStatus
+      })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to update status')
+    }
+
+    // Success! Close modal and refresh data
+    await fetchDashboard()
+
+  } catch (err) {
+    console.error('Failed to update status:', err)
+    setError(err instanceof Error ? err.message : 'Failed to update status')
+  } finally {
+    setUpdatingStatus(false)
+  }
+}
+
+const handleCreateService = async () => {
+  if (!newService.title || !newService.description || !newService.customerName || !newService.customerEmail) {
+    setError('Please fill in all required fields')
+    return
+  }
 
     setCreating(true)
     setError(null)
@@ -133,24 +173,30 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {data?.business.name} Dashboard
-              </h1>
-              <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening.</p>
-            </div>
-            <button 
-              onClick={() => setShowNewServiceForm(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-            >
-              + New Service
-            </button>
-          </div>
+<div className="bg-white shadow-sm border-b">
+  <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="flex justify-between items-center">
+      <div className="flex items-center gap-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {data?.business.name} Dashboard
+          </h1>
+          <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening.</p>
         </div>
+        <nav className="flex gap-6">
+          <a href="/dashboard" className="text-blue-600 font-medium">Services</a>
+          <a href="/customers" className="text-gray-600 hover:text-blue-600">Customers</a>
+        </nav>
       </div>
+      <button 
+        onClick={() => setShowNewServiceForm(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+      >
+        + New Service
+      </button>
+    </div>
+  </div>
+</div>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -319,10 +365,32 @@ export default function Dashboard() {
     <div className="bg-white rounded-lg p-6 w-full max-w-md">
       <h3 className="text-lg font-semibold mb-4">Service Details</h3>
       <p><strong>Title:</strong> {selectedService.title}</p>
-      <p><strong>Status:</strong> {selectedService.status}</p>
       <p><strong>Customer:</strong> {selectedService.customer.name}</p>
+      
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Status
+        </label>
+        <select 
+          value={currentStatus || selectedService.status} 
+          className="w-full p-2 border border-gray-300 rounded"
+          disabled={updatingStatus}
+          onChange={(e) => {
+            setCurrentStatus(e.target.value)
+            handleStatusUpdate(selectedService.id, e.target.value)
+          }}
+        >
+          <option value="PENDING">Pending</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="COMPLETED">Completed</option>
+        </select>
+      </div>
+      
       <button 
-        onClick={() => setSelectedService(null)}
+        onClick={() => {
+          setSelectedService(null)
+          setCurrentStatus('')
+        }}
         className="mt-4 bg-gray-600 text-white px-4 py-2 rounded"
       >
         Close
