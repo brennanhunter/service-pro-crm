@@ -33,31 +33,38 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) return
+// In app/dashboard/page.tsx, update the useEffect:
 
-        const response = await fetch('/api/dashboard', {
-          headers: {
-            'authorization': `Bearer ${session.access_token}`
-          }
-        })
-        const dashboardData = await response.json()
-        
-        if (response.ok) {
-          setData(dashboardData)
-        }
-      } catch (err) {
-        console.error('Failed to fetch dashboard:', err)
-      } finally {
-        setLoading(false)
+useEffect(() => {
+  const fetchDashboard = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      // If no session, redirect to login
+      if (!session) {
+        window.location.href = '/login'
+        return
       }
-    }
 
-    fetchDashboard()
-  }, [])
+      const response = await fetch('/api/dashboard', {
+        headers: {
+          'authorization': `Bearer ${session.access_token}`
+        }
+      })
+      const dashboardData = await response.json()
+      
+      if (response.ok) {
+        setData(dashboardData)
+      }
+    } catch (err) {
+      console.error('Failed to fetch dashboard:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchDashboard()
+}, [])
 
   if (loading) return <div className="p-8">Loading your dashboard...</div>
 
@@ -69,7 +76,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-gray-900">
             {data?.business.name} Dashboard
           </h1>
-          <p className="text-gray-600">Welcome back! Here's what's happening.</p>
+          <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening.</p>
         </div>
       </div>
 

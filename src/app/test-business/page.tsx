@@ -15,7 +15,7 @@ type Business = {
   subdomain: string
   plan: string
   logoUrl?: string
-  brandColors?: any
+  brandColors?: Record<string, string> // e.g., { primary: "#fff", secondary: "#000" }
 }
 
 type User = {
@@ -60,6 +60,7 @@ export default function TestBusiness() {
           setError(data.error)
         }
       } catch (err) {
+        console.error('Failed to fetch business info:', err)
         setError('Failed to fetch business info')
       } finally {
         setLoading(false)

@@ -124,7 +124,7 @@ export async function createBusiness(data: {
   name: string
   subdomain: string
   logoUrl?: string
-  brandColors?: any
+  brandColors?: Record<string, string>
 }) {
   return prisma.business.create({
     data: {
