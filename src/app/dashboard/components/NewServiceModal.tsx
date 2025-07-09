@@ -70,7 +70,7 @@ export default function NewServiceModal({
         customerName: '',
         customerEmail: ''
       })
-    } catch (err) {
+    } catch {
       // Error will be handled by parent component
     }
   }
