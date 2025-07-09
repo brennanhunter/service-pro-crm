@@ -30,7 +30,7 @@ export default function Hero() {
             ✨ Trusted by service businesses like Xtremery Computer Repair
           </p>
           <p className="text-gray-400 text-sm">
-            "Our customers love seeing real-time updates on their repairs"
+            &quot;Our customers love seeing real-time updates on their repairs&quot;
           </p>
         </div>
         
