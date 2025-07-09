@@ -179,11 +179,21 @@ const [newCustomer, setNewCustomer] = useState({
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold mb-2">New This Month</h3>
-            <p className="text-3xl font-bold text-green-600">0</p>
+            <p className="text-3xl font-bold text-green-600">
+              {data?.customers.filter(customer => {
+                const createdDate = new Date(customer.createdAt)
+                const now = new Date()
+                const thisMonth = now.getMonth()
+                const thisYear = now.getFullYear()
+                return createdDate.getMonth() === thisMonth && createdDate.getFullYear() === thisYear
+              }).length || 0}
+            </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold mb-2">Active Services</h3>
-            <p className="text-3xl font-bold text-gray-600">0</p>
+            <p className="text-3xl font-bold text-purple-600">
+              {data?.services.filter(s => s.status !== 'COMPLETED').length || 0}
+            </p>
           </div>
         </div>
 
