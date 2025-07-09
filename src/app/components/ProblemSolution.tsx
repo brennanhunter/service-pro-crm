@@ -12,12 +12,12 @@ export default function ProblemSolution() {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
             Your customers are frustrated,
             <span className="block text-red-400">
-              and you don't even know it
+              and you don&apos;t even know it
             </span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            While you're busy fixing their problems, they're sitting in the dark wondering 
-            what's happening, when it'll be done, and if they should have called someone else.
+            While you&apos;re busy fixing their problems, they&apos;re sitting in the dark wondering 
+            what&apos;s happening, when it&apos;ll be done, and if they should have called someone else.
           </p>
         </div>
 
@@ -32,11 +32,11 @@ export default function ProblemSolution() {
             </div>
             <h3 className="text-xl font-bold text-white mb-4">Lost Customers</h3>
             <p className="text-gray-300 mb-4">
-              "I called three times and still don't know when my repair will be done. 
-              Maybe I should try someone else..."
+              &quot;I called three times and still don&apos;t know when my repair will be done. 
+              Maybe I should try someone else...&quot;
             </p>
             <div className="text-red-400 font-semibold">
-              → Customers leave for competitors who "seem more organized"
+              → Customers leave for competitors who &quot;seem more organized&quot;
             </div>
           </div>
 
@@ -49,8 +49,8 @@ export default function ProblemSolution() {
             </div>
             <h3 className="text-xl font-bold text-white mb-4">Manual Chaos</h3>
             <p className="text-gray-300 mb-4">
-              Sticky notes, phone calls, "Did I update Mrs. Johnson?" 
-              You're drowning in manual updates and losing track.
+              Sticky notes, phone calls, &quot;Did I update Mrs. Johnson?&quot; 
+              You&apos;re drowning in manual updates and losing track.
             </p>
             <div className="text-orange-400 font-semibold">
               → You work late just keeping customers informed
@@ -67,10 +67,10 @@ export default function ProblemSolution() {
             <h3 className="text-xl font-bold text-white mb-4">Unprofessional Look</h3>
             <p className="text-gray-300 mb-4">
               While your work is excellent, your customer experience feels 
-              outdated compared to the "big guys" in town.
+              outdated compared to the &quot;big guys&quot; in town.
             </p>
             <div className="text-yellow-400 font-semibold">
-              → Customers choose competitors who "look more professional"
+              → Customers choose competitors who &quot;look more professional&quot;
             </div>
           </div>
         </div>
@@ -78,12 +78,12 @@ export default function ProblemSolution() {
         {/* Agitation - Cost of Not Solving */}
         <div className="text-center mb-16 bg-gray-800/50 rounded-2xl p-8 border border-gray-700">
           <h3 className="text-2xl font-bold text-white mb-4">
-            Here's What This Is Really Costing You
+            Here&apos;s What This Is Really Costing You
           </h3>
           <div className="grid md:grid-cols-3 gap-6 text-center">
             <div>
               <div className="text-3xl font-bold text-red-400 mb-2">$50,000+</div>
-              <div className="text-gray-300">Lost revenue per year from customers who don't return</div>
+              <div className="text-gray-300">Lost revenue per year from customers who don&apos;t return</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-orange-400 mb-2">15+ Hours</div>
@@ -91,7 +91,7 @@ export default function ProblemSolution() {
             </div>
             <div>
               <div className="text-3xl font-bold text-yellow-400 mb-2">Zero</div>
-              <div className="text-gray-300">Referrals because customers don't feel special</div>
+              <div className="text-gray-300">Referrals because customers don&apos;t feel special</div>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function ProblemSolution() {
           <p className="text-xl text-gray-300 max-w-4xl mx-auto mb-8">
             Imagine customers getting real-time updates, tracking their service online like an Amazon package, 
             and bragging to their friends about how professional and organized you are. 
-            <strong className="text-cyan-300">That's the ServiceTracker Pro difference.</strong>
+            <strong className="text-cyan-300">That&apos;s the ServiceTracker Pro difference.</strong>
           </p>
           
           {/* Solution Preview */}
@@ -148,10 +148,10 @@ export default function ProblemSolution() {
         <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-2xl p-8 border border-purple-500/30 mb-12">
           <div className="text-center mb-8">
             <h3 className="text-3xl font-bold text-white mb-4">
-              Don't Just Take Our Word For It
+              Don&apos;t Just Take Our Word For It
             </h3>
             <p className="text-gray-300 text-lg">
-              Here's what happened when <span className="text-cyan-300 font-semibold">Xtremery Computer Repair</span> made the switch:
+              Here&apos;s what happened when <span className="text-cyan-300 font-semibold">Xtremery Computer Repair</span> made the switch:
             </p>
           </div>
 
@@ -163,7 +163,7 @@ export default function ProblemSolution() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
               </div>
-              <div className="text-2xl font-bold text-cyan-300 mb-2">"More Professional Than Best Buy"</div>
+              <div className="text-2xl font-bold text-cyan-300 mb-2">&quot;More Professional Than Best Buy&quot;</div>
               <p className="text-gray-300">
                 Customers consistently say Xtremery looks and feels more professional than big box stores
               </p>
@@ -191,7 +191,7 @@ export default function ProblemSolution() {
               </div>
               <div className="text-2xl font-bold text-cyan-300 mb-2">Automated Everything</div>
               <p className="text-gray-300">
-                Invoices send automatically, updates post in real-time - "I actually sleep better now"
+                Invoices send automatically, updates post in real-time - &quot;I actually sleep better now&quot;
               </p>
             </div>
           </div>
@@ -199,9 +199,9 @@ export default function ProblemSolution() {
           {/* Testimonial Quote */}
           <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
             <blockquote className="text-xl text-white mb-4">
-              "Our customers constantly tell us we look more professional than the big guys. 
+              &quot;Our customers constantly tell us we look more professional than the big guys. 
               The automated updates and invoices have given me my evenings back. 
-              Best investment I've made for the business."
+              Best investment I&apos;ve made for the business.&quot;
             </blockquote>
             <div className="text-cyan-300 font-semibold">
               — Brennan Hunter, Xtremery Computer Repair
@@ -215,7 +215,7 @@ export default function ProblemSolution() {
             Ready to Transform Your Customer Experience?
           </h3>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join service businesses like Xtremery who've made the switch to professional customer management. 
+            Join service businesses like Xtremery who&apos;ve made the switch to professional customer management. 
             Your customers (and your sleep schedule) will thank you.
           </p>
           
