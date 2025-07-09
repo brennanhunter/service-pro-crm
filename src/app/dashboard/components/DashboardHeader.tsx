@@ -24,7 +24,7 @@ export default function DashboardHeader({
                 {businessName} Dashboard
               </h1>
               <p className="text-gray-600 text-sm sm:text-base mt-1">
-                Welcome back! Here's what's happening.
+                Welcome back! Here&apos;s what&apos;s happening.
               </p>
             </div>
             

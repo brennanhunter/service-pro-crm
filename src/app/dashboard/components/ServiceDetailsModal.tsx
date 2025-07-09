@@ -40,9 +40,8 @@ export default function ServiceDetailsModal({
     setSelectedStatus(newStatus)
     try {
       await onStatusUpdate(service.id, newStatus)
-      // Status will be updated in parent component
-    } catch (err) {
-      // Reset selection on error
+      // No need to use the result here; parent handles update
+    } catch {
       setSelectedStatus('')
     }
   }
