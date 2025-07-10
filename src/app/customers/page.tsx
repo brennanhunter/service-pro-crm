@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import DashboardHeader from '@/app/dashboard/components/DashboardHeader'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -143,30 +144,11 @@ const [newCustomer, setNewCustomer] = useState({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {data?.business.name} Customers
-                </h1>
-                <p className="text-gray-600">Manage your customer relationships</p>
-              </div>
-              <nav className="flex gap-6">
-                <a href="/dashboard" className="text-gray-600 hover:text-blue-600">Services</a>
-                <a href="/customers" className="text-blue-600 font-medium">Customers</a>
-              </nav>
-            </div>
-            <button 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-              onClick={() => setShowAddCustomerForm(true)}
-            >
-              + Add Customer
-            </button>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader 
+  businessName={data?.business.name || 'Your Business'}
+  currentPage="customers"
+  onPrimaryAction={() => setShowAddCustomerForm(true)}
+/>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">

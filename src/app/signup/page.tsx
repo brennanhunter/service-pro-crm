@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { signUpWithEmail } from '@/lib/auth'
 
 export default function SignupPage() {
+  const [businessName, setBusinessName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -20,8 +21,13 @@ export default function SignupPage() {
         setMessage('❌ Please enter your name')
         return
       }
+
+          if (!businessName.trim()) {  // ← Add this validation here
+      setMessage('❌ Please enter your business name')
+      return
+    }
       
-      const result = await signUpWithEmail(email, password, name)
+      const result = await signUpWithEmail(email, password, name, businessName)
       setMessage('✅ Account created! Redirecting to dashboard...')
       console.log('New user:', result.user)
       
@@ -69,6 +75,19 @@ export default function SignupPage() {
         {/* Signup Form */}
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+  <label className="block text-sm font-medium text-gray-200 mb-2">
+    Business Name
+  </label>
+  <input 
+    type="text" 
+    value={businessName}
+    onChange={(e) => setBusinessName(e.target.value)}
+    className="w-full p-4 bg-white/5 border border-gray-300/30 rounded-lg text-white placeholder-gray-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+    placeholder="e.g. Smith HVAC, Computer Repair Plus"
+    required
+  />
+</div>
             <div>
               <label className="block text-sm font-medium text-gray-200 mb-2">
                 Full Name
