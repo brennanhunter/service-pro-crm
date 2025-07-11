@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useCustomers } from '@/hooks/useCustomers'
 import DashboardHeader from '@/components/ui/DashboardHeader'
 import Modal from '@/components/ui/Modal'
-import StatusBadge from '@/components/ui/StatusBadge'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import CustomerDetailsModal from '@/features/customers/components/CustomerDetailsModal'
 

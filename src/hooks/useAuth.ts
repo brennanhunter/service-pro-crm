@@ -9,7 +9,7 @@ const supabase = createClient(
 interface AuthState {
   isLoading: boolean
   isAuthenticated: boolean
-  session: any | null
+  session: import('@supabase/supabase-js').Session | null
   token: string | null
 }
 

@@ -55,9 +55,9 @@ const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     setEditCustomerData({
       name: customer.name,
       email: customer.email,
-      phone: customer.phone || '',
-      address: (customer as any).address || '',
-      notes: (customer as any).notes || ''
+      phone: customer.phone ?? '',
+      address: customer.address ?? '',
+      notes: customer.notes ?? ''
     })
   }
 
@@ -203,12 +203,12 @@ const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
                   <p className="text-gray-600">{customer.email}</p>
                   {customer.phone && <p className="text-gray-600">{customer.phone}</p>}
                   {/* Show address and notes if available */}
-                  {(customer as any).address && (
-                    <p className="text-gray-600 text-sm mt-1">📍 {(customer as any).address}</p>
+                  {customer.address && (
+                    <p className="text-gray-600 text-sm mt-1">📍 {customer.address}</p>
                   )}
-                  {(customer as any).notes && (
+                  {customer.notes && (
                     <p className="text-gray-600 text-sm mt-2 bg-gray-50 p-2 rounded">
-                      💭 {(customer as any).notes}
+                      💭 {customer.notes}
                     </p>
                   )}
                 </div>

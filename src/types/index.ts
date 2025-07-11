@@ -143,7 +143,7 @@ export interface LoadingSpinnerProps {
 export interface AuthState {
   isLoading: boolean
   isAuthenticated: boolean
-  session: any | null
+  session: unknown | null
   token: string | null
 }
 

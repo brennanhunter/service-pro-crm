@@ -4,7 +4,6 @@ import {
   CreateCustomerData, 
   CreateServiceData, 
   UpdateServiceStatusData,
-  ApiError 
 } from '@/types'
 
 class ApiClient {
