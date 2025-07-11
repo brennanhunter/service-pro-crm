@@ -1,5 +1,5 @@
 import ServiceCard from './ServiceCard'
-import EmptyState from './EmptyState'
+import EmptyState from '../../../components/ui/EmptyState'
 
 interface Service {
   id: string

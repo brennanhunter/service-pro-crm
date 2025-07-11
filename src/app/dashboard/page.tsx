@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 // Import our new components
-import DashboardHeader from './components/DashboardHeader'
-import StatsGrid from './components/StatsGrid'
-import ServicesList from './components/ServicesList'
-import NewServiceModal from './components/NewServiceModal'
-import ServiceDetailsModal from './components/ServiceDetailsModal'
-import LoadingSpinner from './components/LoadingSpinner'
+import DashboardHeader from '@/components/ui/DashboardHeader'
+import StatsGrid from '@/features/dashboard/components/StatsGrid'
+import ServicesList from '@/features/services/components/ServicesList'
+import NewServiceModal from '@/features/services/components/NewServiceModal'
+import ServiceDetailsModal from '@/features/services/components/ServiceDetailsModal'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

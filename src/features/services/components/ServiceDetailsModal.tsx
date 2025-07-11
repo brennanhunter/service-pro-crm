@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import StatusBadge from './StatusBadge'
+import StatusBadge from '@/components/ui/StatusBadge'
 
 interface Service {
   id: string
