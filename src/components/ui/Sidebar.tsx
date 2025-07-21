@@ -18,11 +18,7 @@ export function Sidebar({ businessName }: SidebarProps) {
     try {
       setLoggingOut(true);
       
-      // Clear any cached auth state first
-      localStorage.removeItem('supabase.auth.token');
-      sessionStorage.clear();
-      
-      // Sign out from Supabase
+      // Sign out from Supabase (this should handle clearing tokens)
       await supabase.auth.signOut();
       
       // Force a clean redirect to login page
@@ -31,8 +27,8 @@ export function Sidebar({ businessName }: SidebarProps) {
     } catch (error) {
       console.error('Error logging out:', error);
       
-      // Even if logout fails, clear local storage and redirect
-      localStorage.clear();
+      // Only clear storage if logout fails
+      localStorage.removeItem('supabase.auth.token');
       sessionStorage.clear();
       window.location.replace('/login');
     } finally {

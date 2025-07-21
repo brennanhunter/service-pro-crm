@@ -58,23 +58,45 @@ export default function Dashboard() {
   }, [sidebarOpen])
 
   useEffect(() => {
+    console.log('Dashboard component mounted, fetching data...');
     fetchDashboard()
   }, [])
 
   const fetchDashboard = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      setLoading(true);
+      
+      // Get session with retry logic
+      let session = null;
+      let retries = 3;
+      
+      while (retries > 0 && !session) {
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          retries--;
+          if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+            continue;
+          }
+        } else {
+          session = currentSession;
+          break;
+        }
+      }
       
       if (!session) {
-        window.location.href = '/login'
-        return
+        console.log('No session found after retries, redirecting to login');
+        window.location.href = '/login';
+        return;
       }
 
       const response = await fetch('/api/dashboard', {
         headers: {
           'authorization': `Bearer ${session.access_token}`
         }
-      })
+      });
       
       const dashboardData = await response.json()
       

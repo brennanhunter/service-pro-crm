@@ -16,22 +16,37 @@ class AuthErrorBoundary extends React.Component<
   }
 
   static getDerivedStateFromError(error: Error): AuthErrorBoundaryState {
-    // Check if it's an auth-related error
-    if (
-      error.message.includes('auth') ||
-      error.message.includes('token') ||
-      error.message.includes('session') ||
-      error.message.includes('supabase')
-    ) {
+    console.log('Error caught by AuthErrorBoundary:', error.message);
+    
+    // Only handle specific Supabase auth errors
+    const authErrorPatterns = [
+      'Invalid login credentials',
+      'Email not confirmed',
+      'Token has expired',
+      'Invalid JWT',
+      'User not found',
+      'Session not found',
+      'AuthSession'
+    ];
+    
+    const isAuthError = authErrorPatterns.some(pattern => 
+      error.message.includes(pattern)
+    );
+    
+    if (isAuthError) {
+      console.log('Detected auth error, clearing session...');
       // Clear auth state and redirect
       if (typeof window !== 'undefined') {
-        localStorage.clear();
+        localStorage.removeItem('supabase.auth.token');
         sessionStorage.clear();
         window.location.replace('/login');
       }
+      return { hasError: true };
     }
     
-    return { hasError: true };
+    // For non-auth errors, just log and don't redirect
+    console.log('Non-auth error, not redirecting');
+    return { hasError: false };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
