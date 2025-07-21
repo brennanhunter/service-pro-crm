@@ -123,13 +123,13 @@ export default function NewServiceModal({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
+            Description (Optional)
           </label>
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({...formData, description: e.target.value})}
             className="w-full p-2 border border-gray-300 rounded h-20 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Describe the service needed..."
+            placeholder="Describe the service needed (optional)..."
             disabled={isLoading}
           />
         </div>

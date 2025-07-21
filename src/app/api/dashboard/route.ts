@@ -61,13 +61,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       business: {
         name: dbUser.business.name,
-        subdomain: dbUser.business.subdomain
+        subdomain: dbUser.business.subdomain,
+        brandColors: dbUser.business.brandColors
       },
       services: dbUser.business.services,
-      debug: { // Temporary debug info
-        userId: user.id,
-        businessId: dbUser.business.id,
-        servicesCount: dbUser.business.services.length
+      stats: {
+        totalCustomers: new Set(dbUser.business.services.map(s => s.customer.id)).size,
+        activeServices: dbUser.business.services.filter(s => s.status !== 'COMPLETED').length,
+        completedServices: dbUser.business.services.filter(s => s.status === 'COMPLETED').length,
+        totalRevenue: 0 // Will be calculated when invoicing is implemented
       }
     })
   } catch (error) {

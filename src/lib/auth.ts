@@ -19,7 +19,22 @@ export async function signInWithEmail(email: string, password: string) {
   return data
 }
 
-export async function signUpWithEmail(email: string, password: string, name: string, businessName: string) {
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`
+    }
+  })
+  
+  if (error) {
+    throw new Error(error.message)
+  }
+  
+  return data
+}
+
+export async function signUpWithEmail(email: string, password: string, name: string) {
   // 1. Create user in Supabase Auth
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -30,23 +45,8 @@ export async function signUpWithEmail(email: string, password: string, name: str
     throw new Error(error.message)
   }
 
-  // 2. If auth user was created, also create in our database via API
-  if (data.user) {
-    try {
-      await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: data.user.id,
-          email: email,
-          name: name,
-          businessName: businessName
-        })
-      })
-    } catch (dbError) {
-      console.log('Database user creation failed:', dbError)
-    }
-  }
+  // Note: We don't create the database record here anymore
+  // All users (email and Google) will go through onboarding to complete their profile
   
   return data
 }

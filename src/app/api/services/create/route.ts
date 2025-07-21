@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
     const { title, description, customerName, customerEmail, customerPhone, priority = 'MEDIUM' } = body;
 
     // Validate required fields
-    if (!title || !description || !customerName || !customerEmail) {
+    if (!title || !customerName || !customerEmail) {
       return NextResponse.json({ 
-        error: 'Missing required fields: title, description, customerName, customerEmail' 
+        error: 'Missing required fields: title, customerName, customerEmail' 
       }, { status: 400 });
     }
 

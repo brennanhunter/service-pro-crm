@@ -180,7 +180,7 @@ export default function ServicesPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar businessName="Loading..." />
-        <div className="flex-1 ml-64">
+        <div className="flex-1 md:ml-64">
           <div className="flex items-center justify-center h-screen">
             <LoadingSpinner size="lg" text="Loading services..." />
           </div>
@@ -193,7 +193,7 @@ export default function ServicesPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar businessName="Error" />
-        <div className="flex-1 ml-64">
+        <div className="flex-1 md:ml-64">
           <div className="flex items-center justify-center h-screen">
             <div className="text-center">
               <div className="text-red-600 mb-4">
@@ -222,17 +222,17 @@ export default function ServicesPage() {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar businessName={business.name} />
       
-      <div className="flex-1 ml-64">
-        <div className="p-8">
+      <div className="flex-1 md:ml-64">
+        <div className="p-4 md:p-8">
           {/* Page Header */}
-          <div className="mb-8 flex justify-between items-center">
+          <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Services</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Services</h1>
               <p className="text-gray-600 mt-2">Manage all your service requests and track their progress</p>
             </div>
             <button
               onClick={() => setShowNewServiceModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

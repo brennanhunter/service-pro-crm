@@ -155,7 +155,7 @@ export default function Customers() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar businessName="Loading..." />
-        <div className="flex-1 ml-64">
+        <div className="flex-1 md:ml-64">
           <div className="flex items-center justify-center h-screen">
             <LoadingSpinner size="lg" />
           </div>
@@ -168,8 +168,8 @@ export default function Customers() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar businessName={data?.business.name || "Your Business"} />
-        <div className="flex-1 ml-64">
-          <div className="p-8">
+        <div className="flex-1 md:ml-64">
+          <div className="p-4 md:p-8">
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               Error: {error}
             </div>
@@ -183,8 +183,8 @@ export default function Customers() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar businessName="Your Business" />
-        <div className="flex-1 ml-64">
-          <div className="p-8">
+        <div className="flex-1 md:ml-64">
+          <div className="p-4 md:p-8">
             <div className="text-center text-gray-500">No data available</div>
           </div>
         </div>
@@ -196,17 +196,17 @@ export default function Customers() {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar businessName={data.business?.name || "Your Business"} />
       
-      <div className="flex-1 ml-64">
-        <div className="p-8">
+      <div className="flex-1 md:ml-64">
+        <div className="p-4 md:p-8">
         {/* Page Header */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Customers</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Customers</h1>
             <p className="text-gray-600 mt-2">Manage your customer relationships and service history</p>
           </div>
           <button
             onClick={() => setShowAddCustomerForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -312,11 +312,11 @@ export default function Customers() {
                     className="px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors"
                   >
                     <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-gray-900 mb-1">{customer.name}</h3>
-                        <p className="text-gray-600 mb-2">{customer.email}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-medium text-gray-900 mb-1 truncate">{customer.name}</h3>
+                        <p className="text-gray-600 mb-2 truncate">{customer.email}</p>
                         {customer.phone && (
-                          <p className="text-sm text-gray-500 mb-2">{customer.phone}</p>
+                          <p className="text-sm text-gray-500 mb-2 truncate">{customer.phone}</p>
                         )}
                         <div className="flex items-center text-sm text-gray-500">
                           <span>{customerServices.length} total service{customerServices.length !== 1 ? 's' : ''}</span>
@@ -330,11 +330,11 @@ export default function Customers() {
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0 ml-4">
                         <p className="text-sm text-gray-500">
                           Added {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'Unknown'}
                         </p>
-                        <div className="mt-2">
+                        <div className="mt-2 flex justify-end">
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>

@@ -22,6 +22,11 @@ type Service = {
 type Business = {
   name: string
   subdomain: string
+  brandColors?: {
+    primary?: string
+    secondary?: string
+    [key: string]: any
+  }
 }
 
 type DashboardStats = {
@@ -253,9 +258,23 @@ export default function Dashboard() {
 
   const { business, stats, services } = data
 
+  // Helper function to get brand colors with fallbacks
+  const getBrandColors = () => {
+    const colors = business?.brandColors
+    return {
+      primary: colors?.primary || '#6366f1',
+      secondary: colors?.secondary || '#06b6d4'
+    }
+  }
+
+  const brandColors = getBrandColors()
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar businessName={business?.name || 'ServicePro'} />
+      <Sidebar 
+        businessName={business?.name || 'ServicePro'} 
+        brandColors={brandColors}
+      />
       
       <div className="flex-1 md:ml-64">        
         <div className="p-4 md:p-8 pt-16 md:pt-8">
@@ -270,7 +289,10 @@ export default function Dashboard() {
             <div className="bg-white rounded-lg shadow p-4 md:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: brandColors.primary }}
+                  >
                     <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                     </svg>
@@ -286,7 +308,10 @@ export default function Dashboard() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: brandColors.secondary }}
+                  >
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -303,7 +328,10 @@ export default function Dashboard() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${brandColors.primary}CC` }} // 80% opacity
+                  >
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                     </svg>
@@ -319,7 +347,10 @@ export default function Dashboard() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <div 
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${brandColors.secondary}CC` }} // 80% opacity
+                  >
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -350,12 +381,16 @@ export default function Dashboard() {
                           <p className="text-xs text-gray-500">{service.customer.name}</p>
                         </div>
                         <div className="text-right">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            service.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                            service.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                            service.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
+                          <span 
+                            className="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white"
+                            style={{
+                              backgroundColor: 
+                                service.status === 'COMPLETED' ? brandColors.secondary :
+                                service.status === 'IN_PROGRESS' ? brandColors.primary :
+                                service.status === 'PENDING' ? '#f59e0b' : // amber-500
+                                '#6b7280' // gray-500
+                            }}
+                          >
                             {service.status.replace('_', ' ').toLowerCase()}
                           </span>
                         </div>
@@ -379,7 +414,10 @@ export default function Dashboard() {
                     onClick={() => setShowNewServiceModal(true)}
                     className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                    <div 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
+                      style={{ backgroundColor: brandColors.primary }}
+                    >
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
@@ -391,7 +429,10 @@ export default function Dashboard() {
                     href="/customers"
                     className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                    <div 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
+                      style={{ backgroundColor: brandColors.secondary }}
+                    >
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                       </svg>
@@ -403,7 +444,10 @@ export default function Dashboard() {
                     href="/services"
                     className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                    <div 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
+                      style={{ backgroundColor: brandColors.primary + 'CC' }}
+                    >
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

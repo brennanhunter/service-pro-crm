@@ -7,13 +7,25 @@ import { supabase } from '@/lib/database';
 
 interface SidebarProps {
   businessName: string;
+  brandColors?: {
+    primary: string;
+    secondary: string;
+  };
 }
 
-export function Sidebar({ businessName }: SidebarProps) {
+export function Sidebar({ businessName, brandColors }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  // Helper function to get brand colors with fallbacks
+  const getBrandColors = () => ({
+    primary: brandColors?.primary || '#2563eb', // blue-600
+    secondary: brandColors?.secondary || '#06b6d4' // cyan-500
+  });
+
+  const colors = getBrandColors();
 
   const handleLogout = async () => {
     try {
@@ -89,7 +101,10 @@ export function Sidebar({ businessName }: SidebarProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: colors.primary }}
+                >
                   <span className="text-white font-bold text-sm">
                     {businessName?.charAt(0)?.toUpperCase() || 'S'}
                   </span>
@@ -117,14 +132,15 @@ export function Sidebar({ businessName }: SidebarProps) {
                         href={item.href}
                         onClick={() => setIsMobileOpen(false)}
                         className={`
-                          flex items-center space-x-4 p-4 rounded-lg text-base font-medium transition-colors
+                          flex items-center space-x-4 p-4 rounded-lg text-base font-medium transition-colors border
                           ${isActive
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 border border-transparent'
+                            ? 'text-white border-transparent'
+                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 border-transparent'
                           }
                         `}
+                        style={isActive ? { backgroundColor: colors.primary } : {}}
                       >
-                        <span className={`${isActive ? 'text-blue-700' : 'text-gray-400'} w-6 h-6 flex-shrink-0`}>
+                        <span className={`${isActive ? 'text-white' : 'text-gray-400'} w-6 h-6 flex-shrink-0`}>
                           {item.icon}
                         </span>
                         <span className="text-lg">{item.name}</span>
@@ -158,7 +174,10 @@ export function Sidebar({ businessName }: SidebarProps) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {!isCollapsed && (
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: colors.primary }}
+              >
                 <span className="text-white font-bold text-sm">
                   {businessName?.charAt(0)?.toUpperCase() || 'S'}
                 </span>
@@ -193,12 +212,13 @@ export function Sidebar({ businessName }: SidebarProps) {
                     className={`
                       flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors
                       ${isActive
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                        ? 'text-white'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }
                     `}
+                    style={isActive ? { backgroundColor: colors.primary } : {}}
                   >
-                    <span className={isActive ? 'text-blue-700' : 'text-gray-400'}>{item.icon}</span>
+                    <span className={isActive ? 'text-white' : 'text-gray-400'}>{item.icon}</span>
                     {!isCollapsed && <span>{item.name}</span>}
                   </Link>
                 </li>

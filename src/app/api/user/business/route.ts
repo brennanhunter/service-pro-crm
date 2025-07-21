@@ -47,3 +47,99 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const { businessName, businessType, teamSize, primaryGoal, brandColors, userName } = await request.json()
+
+    if (!businessName?.trim()) {
+      return NextResponse.json({ error: 'Business name is required' }, { status: 400 })
+    }
+
+    // Get the current user from Supabase auth using session
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+    // Get auth header from the request
+    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization')
+    let user = null
+
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.replace('Bearer ', '')
+      const { data: { user: authUser }, error } = await supabase.auth.getUser(token)
+      if (!error && authUser) {
+        user = authUser
+      }
+    }
+
+    // If no user from auth header, try getting from session (this is the fallback)
+    if (!user) {
+      const { data: { user: sessionUser }, error: sessionError } = await supabase.auth.getUser()
+      if (!sessionError && sessionUser) {
+        user = sessionUser
+      }
+    }
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
+
+    // Check if user already has a business
+    const existingUser = await prisma.user.findFirst({
+      where: { email: user.email! },
+      include: { business: true }
+    })
+
+    if (existingUser) {
+      return NextResponse.json({ error: 'User already has a business profile' }, { status: 400 })
+    }
+
+    // Create business first with brand colors and onboarding data
+    const business = await prisma.business.create({
+      data: {
+        name: businessName.trim(),
+        subdomain: `${businessName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Date.now()}`,
+        plan: 'starter',
+        // Store brand colors and additional data
+        brandColors: {
+          primary: brandColors?.primary || '#6366f1',
+          secondary: brandColors?.secondary || '#06b6d4',
+          businessType: businessType || null,
+          teamSize: teamSize || null,
+          primaryGoal: primaryGoal || null,
+          onboardedAt: new Date().toISOString()
+        }
+      }
+    })
+
+    // Then create user
+    const newUser = await prisma.user.create({
+      data: {
+        id: user.id,
+        businessId: business.id,
+        email: user.email!,
+        name: userName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+        role: 'ADMIN'
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      user: newUser,
+      business: business,
+      onboarding: {
+        businessType,
+        teamSize,
+        primaryGoal,
+        brandColors
+      }
+    })
+
+  } catch (error) {
+    console.error('Business creation error:', error)
+    const errorMessage = (error instanceof Error) ? error.message : 'Failed to create business profile';
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
+  }
+}
