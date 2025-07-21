@@ -1,5 +1,6 @@
 'use client'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import Hero from './components/Hero'
 import ProblemSolution from './components/ProblemSolution'
@@ -10,18 +11,20 @@ const supabase = createClient(
 )
 
 export default function Home() {
+  const router = useRouter()
+
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        // Redirect to dashboard if already logged in
-        window.location.href = '/dashboard'
+        // Use Next.js router for better mobile compatibility
+        router.push('/dashboard')
       }
     }
     
     checkAuth()
-  }, [])
+  }, [router])
 
   return (
     <main className="min-h-screen bg-white">

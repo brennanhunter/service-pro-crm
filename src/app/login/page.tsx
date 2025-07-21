@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { signInWithEmail } from '@/lib/auth'
 
 export default function LoginPage() {
@@ -8,6 +9,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -19,10 +21,10 @@ export default function LoginPage() {
       setMessage('✅ Login successful! Redirecting...')
       console.log('Logged in user:', result.user)
       
-      // Redirect to dashboard after successful login
+      // Use Next.js router for better mobile compatibility
       setTimeout(() => {
-        window.location.href = '/dashboard'
-      }, 1500)
+        router.push('/dashboard')
+      }, 1000)
       
     } catch (error) {
       let errorMessage = 'Login failed'
