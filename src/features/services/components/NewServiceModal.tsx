@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Modal from '@/components/ui/Modal'
 
 interface NewServiceModalProps {
   isOpen: boolean
@@ -10,7 +11,10 @@ interface NewServiceModalProps {
     customerEmail: string
   }) => Promise<void>
   isLoading?: boolean
-  error?: string | null
+  prefilledCustomer?: {
+    name: string
+    email: string
+  }
 }
 
 export default function NewServiceModal({
@@ -18,7 +22,7 @@ export default function NewServiceModal({
   onClose,
   onSubmit,
   isLoading = false,
-  error = null
+  prefilledCustomer
 }: NewServiceModalProps) {
   const [formData, setFormData] = useState({
     title: '',
@@ -26,52 +30,52 @@ export default function NewServiceModal({
     customerName: '',
     customerEmail: ''
   })
+  const [error, setError] = useState<string | null>(null)
 
-  const [localError, setLocalError] = useState<string | null>(null)
-
-  // Don't render if not open
-  if (!isOpen) return null
+  // Update form when prefilledCustomer changes
+  useEffect(() => {
+    if (prefilledCustomer) {
+      setFormData(prev => ({
+        ...prev,
+        customerName: prefilledCustomer.name,
+        customerEmail: prefilledCustomer.email
+      }))
+    }
+  }, [prefilledCustomer])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLocalError(null)
-
-    // Basic validation
+    
     if (!formData.title.trim()) {
-      setLocalError('Service title is required')
-      return
-    }
-    if (!formData.description.trim()) {
-      setLocalError('Service description is required')
-      return
-    }
-    if (!formData.customerName.trim()) {
-      setLocalError('Customer name is required')
-      return
-    }
-    if (!formData.customerEmail.trim()) {
-      setLocalError('Customer email is required')
+      setError('Please enter a service title')
       return
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.customerEmail)) {
-      setLocalError('Please enter a valid email address')
+    if (!formData.customerName.trim() || !formData.customerEmail.trim()) {
+      setError('Customer name and email are required')
       return
     }
 
     try {
-      await onSubmit(formData)
-      // Reset form on success
+      setError(null)
+      await onSubmit({
+        title: formData.title,
+        description: formData.description,
+        customerName: formData.customerName,
+        customerEmail: formData.customerEmail
+      })
+      
+      // Reset form after successful submission
       setFormData({
         title: '',
         description: '',
-        customerName: '',
-        customerEmail: ''
+        customerName: prefilledCustomer?.name || '',
+        customerEmail: prefilledCustomer?.email || ''
       })
-    } catch {
-      // Error will be handled by parent component
+      
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create service')
     }
   }
 
@@ -80,130 +84,104 @@ export default function NewServiceModal({
       setFormData({
         title: '',
         description: '',
-        customerName: '',
-        customerEmail: ''
+        customerName: prefilledCustomer?.name || '',
+        customerEmail: prefilledCustomer?.email || ''
       })
-      setLocalError(null)
+      setError(null)
       onClose()
     }
   }
 
-  const displayError = error || localError
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Create New Service Request
-          </h3>
-          <button
-            onClick={handleClose}
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Create New Service"
+      disabled={isLoading}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Service Title *
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="e.g., AC Repair, Plumbing Fix"
             disabled={isLoading}
-            className="text-gray-400 hover:text-gray-600 transition-colors duration-150 disabled:opacity-50"
-            aria-label="Close modal"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            required
+          />
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
-          {/* Error Message */}
-          {displayError && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-              {displayError}
-            </div>
-          )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
+            className="w-full p-2 border border-gray-300 rounded h-20 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Describe the service needed..."
+            disabled={isLoading}
+          />
+        </div>
 
-          <div className="space-y-4">
-            {/* Service Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Service Title *
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="What needs to be fixed?"
-                disabled={isLoading}
-                required
-              />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Customer Name *
+          </label>
+          <input
+            type="text"
+            value={formData.customerName}
+            onChange={(e) => setFormData({...formData, customerName: e.target.value})}
+            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Customer's full name"
+            disabled={isLoading || !!prefilledCustomer}
+            required
+          />
+        </div>
 
-            {/* Service Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Describe the problem in detail..."
-                disabled={isLoading}
-                required
-              />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Customer Email *
+          </label>
+          <input
+            type="email"
+            value={formData.customerEmail}
+            onChange={(e) => setFormData({...formData, customerEmail: e.target.value})}
+            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="customer@example.com"
+            disabled={isLoading || !!prefilledCustomer}
+            required
+          />
+        </div>
 
-            {/* Customer Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Customer Name *
-              </label>
-              <input
-                type="text"
-                value={formData.customerName}
-                onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Customer's full name"
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            {/* Customer Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Customer Email *
-              </label>
-              <input
-                type="email"
-                value={formData.customerEmail}
-                onChange={(e) => setFormData({...formData, customerEmail: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="customer@email.com"
-                disabled={isLoading}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={isLoading}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-150 disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              {isLoading ? 'Creating...' : 'Create Service'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isLoading}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading || !formData.title.trim()}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isLoading ? 'Creating...' : 'Create Service'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }

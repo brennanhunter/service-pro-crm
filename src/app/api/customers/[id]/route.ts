@@ -132,19 +132,26 @@ export async function DELETE(
       }
     });
 
-    if (customerServices.length > 0) {
-      return NextResponse.json({ 
-        error: 'Cannot delete customer with existing services' 
-      }, { status: 400 });
-    }
+    // Delete customer and all their services in a transaction
+    await prisma.$transaction(async (tx) => {
+      // First delete all services for this customer
+      if (customerServices.length > 0) {
+        await tx.service.deleteMany({
+          where: {
+            customerId: id,
+            businessId: dbUser.businessId
+          }
+        });
+      }
 
-    // Delete the customer
-    await prisma.customer.delete({
-      where: { id: id }
+      // Then delete the customer
+      await tx.customer.delete({
+        where: { id: id }
+      });
     });
 
     return NextResponse.json({ 
-      message: 'Customer deleted successfully'
+      message: `Customer deleted successfully along with ${customerServices.length} service${customerServices.length !== 1 ? 's' : ''}`
     });
 
   } catch (error) {

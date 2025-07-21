@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from './useAuth'
 import { getCustomers, createCustomer as apiCreateCustomer } from '@/lib/api'
 import { 
@@ -22,13 +22,7 @@ export function useCustomers() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (isAuthenticated && token) {
-      fetchCustomers()
-    }
-  }, [isAuthenticated, token])
-
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     if (!token) return
 
     try {
@@ -43,7 +37,13 @@ export function useCustomers() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [token])
+
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      fetchCustomers()
+    }
+  }, [isAuthenticated, token, fetchCustomers])
 
   const createCustomer = async (customerData: CreateCustomerData) => {
     if (!token) throw new Error('No auth token available')

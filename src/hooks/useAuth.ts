@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -21,11 +21,7 @@ export function useAuth(redirectToLogin = true) {
     token: null
   })
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       
@@ -62,7 +58,11 @@ export function useAuth(redirectToLogin = true) {
         window.location.href = '/login'
       }
     }
-  }
+  }, [redirectToLogin])
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
 
   const getAuthHeaders = () => {
     if (!authState.token) {
