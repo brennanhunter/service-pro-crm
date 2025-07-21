@@ -14,7 +14,11 @@ export default function OnboardingPage() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ 
+    id: string; 
+    email?: string; 
+    user_metadata?: { full_name?: string }
+  } | null>(null)
   const router = useRouter()
 
   const businessTypes = [
@@ -154,7 +158,7 @@ export default function OnboardingPage() {
             </span>
           </h1>
           <p className="text-gray-300 text-lg">
-            Let's set up your business profile
+            Let&apos;s set up your business profile
           </p>
           <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
             <p className="text-sm text-gray-200">
@@ -203,7 +207,7 @@ export default function OnboardingPage() {
             {/* Team Size */}
             <div>
               <label className="block text-sm font-medium text-gray-200 mb-2">
-                What's your team size? *
+                What&apos;s your team size? *
               </label>
               <select
                 value={teamSize}
@@ -221,7 +225,7 @@ export default function OnboardingPage() {
             {/* Primary Goal */}
             <div>
               <label className="block text-sm font-medium text-gray-200 mb-2">
-                What's your primary goal with ServiceTracker Pro? *
+                What&apos;s your primary goal with ServiceTracker Pro? *
               </label>
               <select
                 value={primaryGoal}

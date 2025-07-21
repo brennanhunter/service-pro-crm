@@ -25,7 +25,7 @@ type Business = {
   brandColors?: {
     primary?: string
     secondary?: string
-    [key: string]: any
+    [key: string]: string | undefined
   }
 }
 
@@ -49,45 +49,6 @@ export default function Dashboard() {
   const [creatingService, setCreatingService] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-
-  // Add error boundary effect
-  useEffect(() => {
-    const handleError = (event: ErrorEvent) => {
-      console.error('Dashboard error:', event.error);
-      setError('An unexpected error occurred. Please refresh the page.');
-    };
-
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', event.reason);
-      setError('An unexpected error occurred. Please refresh the page.');
-    };
-
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-    return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log('Dashboard component mounted, fetching data...');
-    
-    // Check if Supabase environment variables are available
-    const hasEnvVars = typeof window !== 'undefined' && 
-                      process.env.NEXT_PUBLIC_SUPABASE_URL && 
-                      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-                      
-    if (!hasEnvVars) {
-      console.error('Missing environment variables');
-      setError('Application configuration error. Missing Supabase environment variables.');
-      setLoading(false);
-      return;
-    }
-    
-    fetchDashboard()
-  }, [])
 
   const fetchDashboard = async () => {
     try {
@@ -136,20 +97,66 @@ export default function Dashboard() {
           stats: {
             totalCustomers: uniqueCustomers,
             activeServices,
+            totalRevenue: 0, // We'll calculate this later if needed
             completedServices,
-            totalRevenue: 0 // We'll need to add this to the API later
           }
-        })
+        });
+        
+        console.log('Dashboard state updated successfully');
       } else {
-        throw new Error(dashboardData.error || 'Failed to fetch dashboard')
+        if (response.status === 404) {
+          console.log('No business data found, redirecting to onboarding');
+          router.push('/onboarding');
+        } else {
+          throw new Error(dashboardData.error || `Failed to fetch dashboard: ${response.status}`);
+        }
       }
     } catch (err) {
-      console.error('Failed to fetch dashboard:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+      console.error('Dashboard fetch error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard');
     } finally {
       setLoading(false)
     }
   }
+
+  // Add error boundary effect
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Dashboard error:', event.error);
+      setError('An unexpected error occurred. Please refresh the page.');
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      setError('An unexpected error occurred. Please refresh the page.');
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('Dashboard component mounted, fetching data...');
+    
+    // Check if Supabase environment variables are available
+    const hasEnvVars = typeof window !== 'undefined' && 
+                      process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+                      
+    if (!hasEnvVars) {
+      console.error('Missing environment variables');
+      setError('Application configuration error. Missing Supabase environment variables.');
+      setLoading(false);
+      return;
+    }
+    
+    fetchDashboard()
+  }, [fetchDashboard])
 
   const handleCreateService = async (serviceData: {
     title: string
