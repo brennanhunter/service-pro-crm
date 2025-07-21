@@ -54,7 +54,11 @@ export function Sidebar({ businessName }: SidebarProps) {
   ];
 
   return (
-    <div className={`bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-30 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+    <div className={`bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-30 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'} md:static md:h-auto`}>
+      {/* Mobile overlay */}
+      {!isCollapsed && (
+        <div className="fixed inset-0 bg-black bg-opacity-25 z-20 md:hidden" onClick={() => setIsCollapsed(true)} />
+      )}
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {!isCollapsed && (
