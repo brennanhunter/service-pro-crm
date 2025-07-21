@@ -11,16 +11,17 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-// Supabase Client
-export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-)
+// Get environment variables with fallbacks
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://gexwglnqgypqnatctnrp.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdleHdnbG5xZ3lwcW5hdGN0bnJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MTQ1MjgsImV4cCI6MjA2NzQ5MDUyOH0.3GWmIUbyluxCymtIMN64KjRnWGlf_I_Q9ZmsPRXYSF8'
 
-// Supabase Service Role Client (for admin operations)
+// Supabase Client (for client-side operations)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Supabase Service Role Client (for server-side/admin operations)
 export const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_URL || supabaseUrl,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdleHdnbG5xZ3lwcW5hdGN0bnJwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTkxNDUyOCwiZXhwIjoyMDY3NDkwNTI4fQ.P8MQrCrd1knQb4h2CMGc3qRJ5BlAF3Gfj3mE0Lkle8Q'
 )
 
 // Multi-tenant helper functions

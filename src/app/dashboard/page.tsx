@@ -44,6 +44,27 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  // Add error boundary effect
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Dashboard error:', event.error);
+      setError('An unexpected error occurred. Please refresh the page.');
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      setError('An unexpected error occurred. Please refresh the page.');
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
   // Handle sidebar on mobile
   useEffect(() => {
     if (sidebarOpen) {
@@ -59,39 +80,49 @@ export default function Dashboard() {
 
   useEffect(() => {
     console.log('Dashboard component mounted, fetching data...');
+    
+    // Check if Supabase environment variables are available
+    const hasEnvVars = typeof window !== 'undefined' && 
+                      process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+                      
+    if (!hasEnvVars) {
+      console.error('Missing environment variables');
+      setError('Application configuration error. Missing Supabase environment variables.');
+      setLoading(false);
+      return;
+    }
+    
     fetchDashboard()
   }, [])
 
   const fetchDashboard = async () => {
     try {
       setLoading(true);
+      console.log('Starting dashboard fetch...');
       
-      // Get session with retry logic
-      let session = null;
-      let retries = 3;
+      // Check if supabase client is available
+      if (!supabase) {
+        throw new Error('Supabase client not initialized');
+      }
       
-      while (retries > 0 && !session) {
-        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Session error:', error);
-          retries--;
-          if (retries > 0) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-            continue;
-          }
-        } else {
-          session = currentSession;
-          break;
-        }
+      // Simple session check without aggressive retries
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Session error:', error);
+        throw new Error(`Authentication error: ${error.message}`);
       }
       
       if (!session) {
-        console.log('No session found after retries, redirecting to login');
-        window.location.href = '/login';
+        console.log('No session found, redirecting to login');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 100);
         return;
       }
 
+      console.log('Session found, fetching dashboard data...');
       const response = await fetch('/api/dashboard', {
         headers: {
           'authorization': `Bearer ${session.access_token}`
@@ -121,13 +152,13 @@ export default function Dashboard() {
       } else {
         throw new Error(dashboardData.error || 'Failed to fetch dashboard')
       }
-    } catch (err) {
-      console.error('Failed to fetch dashboard:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard')
-    } finally {
-      setLoading(false)
-    }
+  } catch (err) {
+    console.error('Failed to fetch dashboard:', err)
+    setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleCreateService = async (serviceData: {
     title: string
@@ -206,12 +237,27 @@ export default function Dashboard() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h3>
               <p className="text-gray-600 mb-4">{error || 'Something went wrong'}</p>
-              <button
-                onClick={fetchDashboard}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                Try Again
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setError(null);
+                    fetchDashboard();
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors mr-2"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/login';
+                  }}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                >
+                  Clear Session & Login
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -223,7 +269,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar businessName={business.name} />
+      <Sidebar businessName={business?.name || 'ServicePro'} />
       
       <div className="flex-1 md:ml-64">
         {/* Mobile header */}
