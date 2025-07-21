@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface SidebarProps {
   businessName: string;
@@ -11,6 +17,25 @@ interface SidebarProps {
 export function Sidebar({ businessName }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      
+      // Redirect to login page
+      window.location.href = '/login';
+      
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('Failed to log out. Please try again.');
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   const navigation = [
     {
@@ -115,15 +140,57 @@ export function Sidebar({ businessName }: SidebarProps) {
       {/* User Profile Section */}
       {!isCollapsed && (
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-gray-600 font-medium text-sm">U</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-600 font-medium text-sm">
+                  {businessName?.charAt(0)?.toUpperCase() || 'U'}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{businessName}</p>
+                <p className="text-xs text-gray-500 truncate">Business Account</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">User</p>
-              <p className="text-xs text-gray-500 truncate">Settings</p>
-            </div>
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
+              title="Logout"
+            >
+              {loggingOut ? (
+                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0115.357-2M7.536 20.394A8.001 8.001 0 1020.394 7.536" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              )}
+            </button>
           </div>
+        </div>
+      )}
+
+      {/* Collapsed state logout button */}
+      {isCollapsed && (
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="w-full p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
+            title="Logout"
+          >
+            {loggingOut ? (
+              <svg className="w-4 h-4 animate-spin mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0115.357-2M7.536 20.394A8.001 8.001 0 1020.394 7.536" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            )}
+          </button>
         </div>
       )}
     </div>

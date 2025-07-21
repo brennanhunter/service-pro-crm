@@ -1,14 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/database'
 import { Sidebar } from '@/components/ui/Sidebar'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import NewServiceModal from '@/features/services/components/NewServiceModal'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 type Service = {
   id: string
