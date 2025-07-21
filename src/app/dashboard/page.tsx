@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/database'
 import { Sidebar } from '@/components/ui/Sidebar'
@@ -50,7 +50,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Starting dashboard fetch...');
@@ -117,7 +117,7 @@ export default function Dashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router])
 
   // Add error boundary effect
   useEffect(() => {
