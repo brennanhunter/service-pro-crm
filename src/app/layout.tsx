@@ -4,6 +4,7 @@ import "./globals.css";
 import PWAProvider from "@/components/PWAProvider";
 import InstallPrompt from "@/components/InstallPrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import AuthErrorBoundary from "@/components/AuthErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -87,11 +88,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PWAProvider>
-          <OfflineIndicator />
-          {children}
-          <InstallPrompt />
-        </PWAProvider>
+        <AuthErrorBoundary>
+          <PWAProvider>
+            <OfflineIndicator />
+            {children}
+            <InstallPrompt />
+          </PWAProvider>
+        </AuthErrorBoundary>
       </body>
     </html>
   );

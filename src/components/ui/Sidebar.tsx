@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/database';
 
 interface SidebarProps {
   businessName: string;
@@ -23,15 +18,23 @@ export function Sidebar({ businessName }: SidebarProps) {
     try {
       setLoggingOut(true);
       
+      // Clear any cached auth state first
+      localStorage.removeItem('supabase.auth.token');
+      sessionStorage.clear();
+      
       // Sign out from Supabase
       await supabase.auth.signOut();
       
-      // Redirect to login page
-      window.location.href = '/login';
+      // Force a clean redirect to login page
+      window.location.replace('/login');
       
     } catch (error) {
       console.error('Error logging out:', error);
-      alert('Failed to log out. Please try again.');
+      
+      // Even if logout fails, clear local storage and redirect
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.replace('/login');
     } finally {
       setLoggingOut(false);
     }
